@@ -1,3 +1,5 @@
+# 같은 폴더 내에 jpg 파일을 위치시킬 것!
+# 이미지를 읽어와서 화면에 띄움
 import cv2 as cv
 import sys
 

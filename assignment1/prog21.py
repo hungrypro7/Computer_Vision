@@ -72,12 +72,17 @@ def transform_along_y_axis(img, pixels):
 
 
 state = 1
-count = 1
-move_value, rotate_angle, scale_value, mirror_value = 0, 0, 1, -1
-accumulative_value, t = 0, 0
+count = 0
+accumulative_value, rotate_angle, scale_value, mirror_value = 0, 0, 1, -1
+save_state = True
 while True:
     cv.circle(image, (320, 240), r, color, thickness)
     cv.imshow('Image', image)
+    if save_state:
+        file_name = 'Transformed' + str(count)
+        cv.imwrite('./' + file_name + '.jpg', image)
+        count += 1
+    
     key = cv.waitKey(0) & 0xFF
 
     if key == ord('T'):  # 'T' 눌렀을 때, 
@@ -95,6 +100,7 @@ while True:
             image = mirror_image(image, mirror_value)
             if rotate_angle > 0:
                 rotate_angle = -rotate_angle
+        save_state = True
         
     elif key == ord('R'):  # 'R' 눌렀을 때,
         image = translate_image(original_image, accumulative_value, accumulative_value)
@@ -109,7 +115,8 @@ while True:
         else:    # 시계 방향으로 10도 회전
             rotate_angle -= 10
         image = rotate_image(image, rotate_angle)
-    
+        save_state = True
+        
     elif key == ord('S'):  # 'S' 눌렀을 때, 이미지를 0.5배로 축소
         if state == 1:
             scale_value -= 0.5
@@ -123,44 +130,44 @@ while True:
             if rotate_angle > 0:
                 rotate_angle = -rotate_angle
         image = rotate_image(image, rotate_angle)
+        save_state = True
         
     elif key == ord('K'):  # 'K' 눌렀을 때, Y축 기준으로 이미지 미러링
         mirror_value = 0
         image = mirror_image(image, mirror_value)
+        save_state = True
         
     elif key == ord('L'):  # 'L' 눌렀을 때, X축 기준으로 이미지 미러링
         mirror_value = 1    
         image = mirror_image(image, mirror_value)
-    
+        save_state = True
+        
     elif key == ord('I'):  # 'I' 눌렀을 때, 모든 변환 초기화 및 이미지 재설정
         image = original_image.copy()
         height, width = image.shape[:2]
         center_coordinates = ((width-1) // 2, (height-1) // 2)
         r, color, thickness = 5, (0, 0, 255), -1
         cv.circle(image, center_coordinates, r, color, thickness)
-    
+        save_state = True
+        
     elif key == ord('X'):  # 'X' 눌렀을 때, X축을 따라 이미지 변환 적용
         image = transform_along_x_axis(image, 10)
-        continue
+        save_state = False
     
     elif key == ord('Y'):  # 'Y' 눌렀을 때, Y축을 따라 이미지 변환 적용
         image = transform_along_y_axis(image, 10)
-        continue
+        save_state = False
     
     elif key == ord('1'):  # '1' 눌렀을 때, state는 1 
         state = 1    
-        continue
+        save_state = False
         
     elif key == ord('2'):  # '2' 눌렀을 때, state는 2
         state = 2
-        continue
+        save_state = False
     
     elif key == 27:  # ESC 루프 탈출
         break
-    
-    #file_name = 'Transformed' + str(count)
-    #cv.imwrite('./' + file_name + '.jpg', image)
-    #count += 1
 
 cv.waitKey()
 cv.destroyAllWindows()

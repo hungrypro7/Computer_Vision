@@ -86,20 +86,24 @@ while True:
     key = cv.waitKey(0) & 0xFF
 
     if key == ord('T'):  # 'T' 눌렀을 때, 
+        image = scale_image(original_image, scale_value)
         if state == 1:    # 이미지를 상하좌우로 -5픽셀씩 이동
-            # move_value = -5
             accumulative_value -= 5
         else:    # 이미지를 상하좌우로 +5픽셀씩 이동
-            # move_value = 5
             accumulative_value += 5
-
-        image = translate_image(original_image, accumulative_value, accumulative_value)
-        image = scale_image(image, scale_value)
-        image = rotate_image(image, rotate_angle)
-        if mirror_value >= 0:
+        image = translate_image(image, accumulative_value, accumulative_value)
+        
+        if mirror_value == 1:
+            image = mirror_image(image, 0)
+            image = mirror_image(image, 1)
+            if rotate_angle <= 0:
+                rotate_angle = -rotate_angle
+            
+        if mirror_value == 0:
             image = mirror_image(image, mirror_value)
             if rotate_angle > 0:
                 rotate_angle = -rotate_angle
+        image = rotate_image(image, rotate_angle)
         save_state = True
         
     elif key == ord('R'):  # 'R' 눌렀을 때,
